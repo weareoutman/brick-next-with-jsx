@@ -1,4 +1,4 @@
-import { ForEach, If, Switch } from 'next-jsx';
+import { ForEach, Fragment, Switch } from 'next-jsx';
 import { CTX, bind } from 'next-jsx/runtime';
 import styleText from './style.css';
 import home from './home/home.js';
@@ -35,12 +35,17 @@ export default (
           {ITEM.label}
         </sl-menu-item>
       </ForEach>
+
+      <sl-input
+        size="small"
+        placeholder="Search..."
+        style={{ marginLeft: '2em', alignSelf: 'center' }}
+      />
     </sl-menu>
+
     <Switch value={bind(CTX.active)}>
-      <div slot="home">{home}</div>
-      <div slot="list">{list}</div>
+      <Fragment slot="home">{home}</Fragment>
+      <Fragment slot="list">{list}</Fragment>
     </Switch>
-    {/* <If value={bind(CTX.active === 'home')}>{home}</If>
-    <If value={bind(CTX.active === 'list')}>{list}</If> */}
   </>
 );
