@@ -59,12 +59,15 @@ routes:
             bricks:
               - dataSource: <% CTX.menus %>
                 brick: ':forEach'
-                children:
-                  - brick: sl-menu-item
-                    properties:
-                      value: <% ITEM.key %>
-                      className: '<%= CTX.active === ITEM.key ? ''active'' : '''' %>'
-                      textContent: <% ITEM.label %>
+                slots:
+                  '':
+                    type: bricks
+                    bricks:
+                      - brick: sl-menu-item
+                        properties:
+                          value: <% ITEM.key %>
+                          className: '<%= CTX.active === ITEM.key ? ''active'' : '''' %>'
+                          textContent: <% ITEM.label %>
         events:
           sl-select:
             - action: history.push
@@ -80,107 +83,113 @@ routes:
                 - <% EVENT.detail.item.value %>
       - dataSource: <%= CTX.active %>
         brick: ':switch'
-        children:
-          - brick: div
-            properties: {}
-            slots:
-              '':
-                type: bricks
-                bricks:
-                  - brick: sl-card
-                    properties:
-                      className: card-header
-                    slots:
-                      header:
-                        type: bricks
-                        bricks:
-                          - brick: div
-                            properties: {}
-                            slots:
-                              '':
-                                type: bricks
-                                bricks:
-                                  - brick: span
-                                    properties:
-                                      textContent: <% FN.sayHello() %>
-                                  - brick: sl-icon-button
-                                    properties:
-                                      name: gear
-                                      label: Settings
-                      '':
-                        type: bricks
-                        bricks:
-                          - brick: span
-                            properties:
-                              textContent: >-
-                                This card has a header. You can put all sorts of
-                                things in it!
-                      footer:
-                        type: bricks
-                        bricks:
-                          - brick: sl-button
-                            properties:
-                              textContent: Go to list
-                            events:
-                              click:
-                                - action: history.push
-                                  args:
-                                    - '<% `${APP.homepage}/list` %>'
-                                    - notify: false
-                                - action: context.replace
-                                  args:
-                                    - active
-                                    - list
-          - brick: div
-            properties: {}
-            slots:
-              '':
-                type: bricks
-                bricks:
-                  - brick: sl-card
-                    properties:
-                      className: card-header
-                    slots:
-                      header:
-                        type: bricks
-                        bricks:
-                          - brick: div
-                            properties: {}
-                            slots:
-                              '':
-                                type: bricks
-                                bricks:
-                                  - brick: span
-                                    properties:
-                                      textContent: This is a list
-                                  - brick: sl-icon-button
-                                    properties:
-                                      name: gear
-                                      label: Settings
-                      '':
-                        type: bricks
-                        bricks:
-                          - brick: span
-                            properties:
-                              textContent: >-
-                                This card has a header. You can put all sorts of
-                                things in it!
-                      footer:
-                        type: bricks
-                        bricks:
-                          - brick: sl-button
-                            properties:
-                              textContent: Back to home
-                            events:
-                              click:
-                                - action: history.push
-                                  args:
-                                    - '<% `${APP.homepage}` %>'
-                                    - notify: false
-                                - action: context.replace
-                                  args:
-                                    - active
-                                    - home
+        slots:
+          home:
+            type: bricks
+            bricks:
+              - brick: div
+                properties: {}
+                slots:
+                  '':
+                    type: bricks
+                    bricks:
+                      - brick: sl-card
+                        properties:
+                          className: card-header
+                        slots:
+                          header:
+                            type: bricks
+                            bricks:
+                              - brick: div
+                                properties: {}
+                                slots:
+                                  '':
+                                    type: bricks
+                                    bricks:
+                                      - brick: span
+                                        properties:
+                                          textContent: <% FN.sayHello() %>
+                                      - brick: sl-icon-button
+                                        properties:
+                                          name: gear
+                                          label: Settings
+                          '':
+                            type: bricks
+                            bricks:
+                              - brick: span
+                                properties:
+                                  textContent: >-
+                                    This card has a header. You can put all
+                                    sorts of things in it!
+                          footer:
+                            type: bricks
+                            bricks:
+                              - brick: sl-button
+                                properties:
+                                  textContent: Go to list
+                                events:
+                                  click:
+                                    - action: history.push
+                                      args:
+                                        - '<% `${APP.homepage}/list` %>'
+                                        - notify: false
+                                    - action: context.replace
+                                      args:
+                                        - active
+                                        - list
+          list:
+            type: bricks
+            bricks:
+              - brick: div
+                properties: {}
+                slots:
+                  '':
+                    type: bricks
+                    bricks:
+                      - brick: sl-card
+                        properties:
+                          className: card-header
+                        slots:
+                          header:
+                            type: bricks
+                            bricks:
+                              - brick: div
+                                properties: {}
+                                slots:
+                                  '':
+                                    type: bricks
+                                    bricks:
+                                      - brick: span
+                                        properties:
+                                          textContent: This is a list
+                                      - brick: sl-icon-button
+                                        properties:
+                                          name: gear
+                                          label: Settings
+                          '':
+                            type: bricks
+                            bricks:
+                              - brick: span
+                                properties:
+                                  textContent: >-
+                                    This card has a header. You can put all
+                                    sorts of things in it!
+                          footer:
+                            type: bricks
+                            bricks:
+                              - brick: sl-button
+                                properties:
+                                  textContent: Back to home
+                                events:
+                                  click:
+                                    - action: history.push
+                                      args:
+                                        - '<% `${APP.homepage}` %>'
+                                        - notify: false
+                                    - action: context.replace
+                                      args:
+                                        - active
+                                        - home
 meta:
   customTemplates: []
   functions:
