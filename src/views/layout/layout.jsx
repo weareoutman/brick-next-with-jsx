@@ -11,20 +11,10 @@ export default (
     <sl-menu
       style={{ display: 'flex' }}
       events={{
-        'sl-select': [
-          {
-            action: 'history.push',
-            args: [
-              CTX.menus.find((menu) => EVENT.detail.item.value === menu.key)
-                .url,
-              { notify: false },
-            ],
-          },
-          {
-            action: 'context.replace',
-            args: ['active', EVENT.detail.item.value],
-          },
-        ],
+        'sl-select': {
+          action: 'context.replace',
+          args: ['active', EVENT.detail.item.value],
+        },
       }}
     >
       <ForEach value={CTX.menus}>

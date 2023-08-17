@@ -19,6 +19,14 @@ export default [
   {
     name: 'active',
     value: CTX.menus.find(menu => menu.url === PATH_NAME)?.key,
+    onChange: {
+      action: 'history.push',
+      args: [
+        CTX.menus.find((menu) => CTX.active === menu.key)
+          .url,
+        { notify: false },
+      ],
+    }
   },
   {
     name: "sayHello",

@@ -17,6 +17,13 @@ routes:
             label: List
       - name: active
         value: <% CTX.menus.find(menu => menu.url === PATH_NAME)?.key %>
+        onChange:
+          action: history.push
+          args:
+            - |-
+              <% CTX.menus.find((menu) => CTX.active === menu.key)
+                        .url %>
+            - notify: false
       - name: sayHello
         value: Hello !!
       - name: asyncValue
@@ -77,17 +84,10 @@ routes:
                     alignSelf: center
         events:
           sl-select:
-            - action: history.push
-              args:
-                - >-
-                  <% CTX.menus.find((menu) => EVENT.detail.item.value ===
-                  menu.key)
-                                  .url %>
-                - notify: false
-            - action: context.replace
-              args:
-                - active
-                - <% EVENT.detail.item.value %>
+            action: context.replace
+            args:
+              - active
+              - <% EVENT.detail.item.value %>
       - dataSource: <%= CTX.active %>
         brick: ':switch'
         slots:
@@ -130,14 +130,10 @@ routes:
                           textContent: Go to list
                         events:
                           click:
-                            - action: history.push
-                              args:
-                                - '<% `${APP.homepage}/list` %>'
-                                - notify: false
-                            - action: context.replace
-                              args:
-                                - active
-                                - list
+                            action: context.replace
+                            args:
+                              - active
+                              - list
           list:
             type: bricks
             bricks:
@@ -177,14 +173,10 @@ routes:
                           textContent: Back to home
                         events:
                           click:
-                            - action: history.push
-                              args:
-                                - '<% `${APP.homepage}` %>'
-                                - notify: false
-                            - action: context.replace
-                              args:
-                                - active
-                                - home
+                            action: context.replace
+                            args:
+                              - active
+                              - home
 meta:
   customTemplates: []
   functions:

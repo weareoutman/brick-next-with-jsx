@@ -12,17 +12,10 @@ export default (
     <sl-button
       slot="footer"
       events={{
-        click: [{
-          action: 'history.push',
-          args: [
-            `${APP.homepage}/list`,
-            { notify: false }
-          ],
-        }, 
-        {
+        click: {
           action: 'context.replace',
           args: ['active', 'list'],
-        },],
+        },
       }}
     >
       Go to list
