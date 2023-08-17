@@ -6,139 +6,127 @@ app:
   standaloneMode: true
 routes:
   - path: '${APP.homepage}'
-    exact: true
-    context:
-      - name: sayHello
-        value: Hello !!
-      - name: asyncValue
-        resolve:
-          useProvider: basic.http-request
-          args:
-            - /x/y/z
-          lazy: true
     bricks:
+      - brick: style
+        properties:
+          textContent: |
+            .card-header {
+              max-width: 300px;
+              margin: 2em auto;
+              display: block;
+            }
+
+            .card-header [slot='header'] {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            }
+
+            .card-header sl-icon-button {
+              font-size: var(--sl-font-size-medium);
+            }
       - brick: tpl-menu
+        properties:
+          active: '<% PATH_NAME === `${APP.homepage}/list` ? ''list'' : ''home'' %>'
+      - brick: div
         properties: {}
-      - brick: sl-card
-        properties:
-          className: card-header
         slots:
-          header:
-            type: bricks
-            bricks:
-              - brick: div
-                properties: {}
-                slots:
-                  '':
-                    type: bricks
-                    bricks:
-                      - brick: span
-                        properties:
-                          textContent: <% FN.sayHello() %>
-                      - brick: sl-icon-button
-                        properties:
-                          name: gear
-                          label: Settings
           '':
-            type: bricks
-            bricks:
-              - brick: span
-                properties:
-                  textContent: >-
-                    This card has a header. You can put all sorts of things in
-                    it!
-          footer:
-            type: bricks
-            bricks:
-              - brick: sl-button
-                properties:
-                  textContent: Go to list
-                events:
-                  click:
-                    action: history.push
-                    args:
-                      - '${APP.homepage}/list'
-      - brick: style
-        properties:
-          textContent: |
-            .card-header {
-              max-width: 300px;
-              margin: 2em auto;
-              display: block;
-            }
-
-            .card-header [slot='header'] {
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-            }
-
-            .card-header sl-icon-button {
-              font-size: var(--sl-font-size-medium);
-            }
-  - path: '${APP.homepage}/list'
-    exact: true
-    bricks:
-      - brick: tpl-menu
-        properties:
-          active: list
-      - brick: sl-card
-        properties:
-          className: card-header
-        slots:
-          header:
-            type: bricks
-            bricks:
-              - brick: div
-                properties: {}
-                slots:
-                  '':
-                    type: bricks
-                    bricks:
-                      - brick: span
-                        properties:
-                          textContent: This is a list
-                      - brick: sl-icon-button
-                        properties:
-                          name: gear
-                          label: Settings
-          '':
-            type: bricks
-            bricks:
-              - brick: span
-                properties:
-                  textContent: >-
-                    This card has a header. You can put all sorts of things in
-                    it!
-          footer:
-            type: bricks
-            bricks:
-              - brick: sl-button
-                properties:
-                  textContent: Back to home
-                events:
-                  click:
-                    action: history.push
-                    args:
-                      - '<% `${APP.homepage}` %>'
-      - brick: style
-        properties:
-          textContent: |
-            .card-header {
-              max-width: 300px;
-              margin: 2em auto;
-              display: block;
-            }
-
-            .card-header [slot='header'] {
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-            }
-
-            .card-header sl-icon-button {
-              font-size: var(--sl-font-size-medium);
-            }
+            type: routes
+            routes:
+              - path: '${APP.homepage}'
+                exact: true
+                context:
+                  - name: sayHello
+                    value: Hello !!
+                  - name: asyncValue
+                    resolve:
+                      useProvider: basic.http-request
+                      args:
+                        - /x/y/z
+                      lazy: true
+                bricks:
+                  - brick: sl-card
+                    properties:
+                      className: card-header
+                    slots:
+                      header:
+                        type: bricks
+                        bricks:
+                          - brick: div
+                            properties: {}
+                            slots:
+                              '':
+                                type: bricks
+                                bricks:
+                                  - brick: span
+                                    properties:
+                                      textContent: <% FN.sayHello() %>
+                                  - brick: sl-icon-button
+                                    properties:
+                                      name: gear
+                                      label: Settings
+                      '':
+                        type: bricks
+                        bricks:
+                          - brick: span
+                            properties:
+                              textContent: >-
+                                This card has a header. You can put all sorts of
+                                things in it!
+                      footer:
+                        type: bricks
+                        bricks:
+                          - brick: sl-button
+                            properties:
+                              textContent: Go to list
+                            events:
+                              click:
+                                action: history.push
+                                args:
+                                  - '${APP.homepage}/list'
+              - path: '${APP.homepage}/list'
+                exact: true
+                bricks:
+                  - brick: sl-card
+                    properties:
+                      className: card-header
+                    slots:
+                      header:
+                        type: bricks
+                        bricks:
+                          - brick: div
+                            properties: {}
+                            slots:
+                              '':
+                                type: bricks
+                                bricks:
+                                  - brick: span
+                                    properties:
+                                      textContent: This is a list
+                                  - brick: sl-icon-button
+                                    properties:
+                                      name: gear
+                                      label: Settings
+                      '':
+                        type: bricks
+                        bricks:
+                          - brick: span
+                            properties:
+                              textContent: >-
+                                This card has a header. You can put all sorts of
+                                things in it!
+                      footer:
+                        type: bricks
+                        bricks:
+                          - brick: sl-button
+                            properties:
+                              textContent: Back to home
+                            events:
+                              click:
+                                action: history.push
+                                args:
+                                  - '<% `${APP.homepage}` %>'
 meta:
   customTemplates:
     - name: tpl-menu

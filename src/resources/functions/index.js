@@ -1,7 +1,9 @@
 import sayHello from './sayHello.js';
 import sayGoodbye from './sayGoodbye.js';
 
-export default {
+const FN = {
   sayHello,
   sayGoodbye,
 };
+
+export default FN;
