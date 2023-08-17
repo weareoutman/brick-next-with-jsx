@@ -1,4 +1,5 @@
-import FN from '../../resources/functions/index.js';
+import { APP } from 'next-jsx/runtime';
+import FN from '../../../resources/functions/index.js';
 
 // Homepage 视图层
 export default (
@@ -11,10 +12,17 @@ export default (
     <sl-button
       slot="footer"
       events={{
-        click: {
+        click: [{
           action: 'history.push',
-          args: ['${APP.homepage}/list'],
-        },
+          args: [
+            `${APP.homepage}/list`,
+            { notify: false }
+          ],
+        }, 
+        {
+          action: 'context.replace',
+          args: ['active', 'list'],
+        },],
       }}
     >
       Go to list

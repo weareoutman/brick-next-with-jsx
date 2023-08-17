@@ -6,6 +6,25 @@ app:
   standaloneMode: true
 routes:
   - path: '${APP.homepage}'
+    context:
+      - name: menus
+        value:
+          - url: '${APP.homepage}'
+            key: home
+            label: Home
+          - url: '${APP.homepage}/list'
+            key: list
+            label: List
+      - name: active
+        value: <% CTX.menus.find(menu => menu.url === PATH_NAME)?.key %>
+      - name: sayHello
+        value: Hello !!
+      - name: asyncValue
+        resolve:
+          useProvider: basic.http-request
+          args:
+            - /x/y/z
+          lazy: true
     bricks:
       - brick: style
         properties:
@@ -25,26 +44,48 @@ routes:
             .card-header sl-icon-button {
               font-size: var(--sl-font-size-medium);
             }
-      - brick: tpl-menu
+
+            sl-menu-item.active::part(label) {
+              color: var(--antd-btn-link-color);
+              box-shadow: inset 0 -2px 0 0 var(--antd-btn-link-color);
+            }
+      - brick: sl-menu
         properties:
-          active: '<% PATH_NAME === `${APP.homepage}/list` ? ''list'' : ''home'' %>'
-      - brick: div
-        properties: {}
+          style:
+            display: flex
         slots:
           '':
-            type: routes
-            routes:
-              - path: '${APP.homepage}'
-                exact: true
-                context:
-                  - name: sayHello
-                    value: Hello !!
-                  - name: asyncValue
-                    resolve:
-                      useProvider: basic.http-request
-                      args:
-                        - /x/y/z
-                      lazy: true
+            type: bricks
+            bricks:
+              - dataSource: <% CTX.menus %>
+                brick: ':forEach'
+                children:
+                  - brick: sl-menu-item
+                    properties:
+                      value: <% ITEM.key %>
+                      className: '<%= CTX.active === ITEM.key ? ''active'' : '''' %>'
+                      textContent: <% ITEM.label %>
+        events:
+          sl-select:
+            - action: history.push
+              args:
+                - >-
+                  <% CTX.menus.find((menu) => EVENT.detail.item.value ===
+                  menu.key)
+                                  .url %>
+                - notify: false
+            - action: context.replace
+              args:
+                - active
+                - <% EVENT.detail.item.value %>
+      - dataSource: <%= CTX.active %>
+        brick: ':switch'
+        children:
+          - brick: div
+            properties: {}
+            slots:
+              '':
+                type: bricks
                 bricks:
                   - brick: sl-card
                     properties:
@@ -82,11 +123,19 @@ routes:
                               textContent: Go to list
                             events:
                               click:
-                                action: history.push
-                                args:
-                                  - '${APP.homepage}/list'
-              - path: '${APP.homepage}/list'
-                exact: true
+                                - action: history.push
+                                  args:
+                                    - '<% `${APP.homepage}/list` %>'
+                                    - notify: false
+                                - action: context.replace
+                                  args:
+                                    - active
+                                    - list
+          - brick: div
+            properties: {}
+            slots:
+              '':
+                type: bricks
                 bricks:
                   - brick: sl-card
                     properties:
@@ -124,53 +173,16 @@ routes:
                               textContent: Back to home
                             events:
                               click:
-                                action: history.push
-                                args:
-                                  - '<% `${APP.homepage}` %>'
+                                - action: history.push
+                                  args:
+                                    - '<% `${APP.homepage}` %>'
+                                    - notify: false
+                                - action: context.replace
+                                  args:
+                                    - active
+                                    - home
 meta:
-  customTemplates:
-    - name: tpl-menu
-      state:
-        - name: menus
-          value:
-            - url: '${APP.homepage}'
-              key: home
-              label: Home
-            - url: '${APP.homepage}/list'
-              key: list
-              label: List
-        - name: active
-          value: home
-          expose: true
-      bricks:
-        - brick: sl-menu
-          properties:
-            style:
-              display: flex
-          slots:
-            '':
-              type: bricks
-              bricks:
-                - dataSource: <% STATE.menus %>
-                  brick: ':forEach'
-                  children:
-                    - brick: sl-menu-item
-                      properties:
-                        value: <% ITEM.url %>
-                        className: '<% STATE.active === ITEM.key ? ''active'' : '''' %>'
-                        textContent: <% ITEM.label %>
-          events:
-            sl-select:
-              action: history.push
-              args:
-                - <% EVENT.detail.item.value %>
-        - brick: style
-          properties:
-            textContent: |
-              sl-menu-item.active::part(label) {
-                color: var(--antd-btn-link-color);
-                box-shadow: inset 0 -2px 0 0 var(--antd-btn-link-color);
-              }
+  customTemplates: []
   functions:
     - name: sayHello
       typescript: true

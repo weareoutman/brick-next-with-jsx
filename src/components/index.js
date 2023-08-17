@@ -1,5 +1,5 @@
-import menu from "./menu/menu.js";
+// import menu from "./menu/menu.js";
 
 export default [
-  menu
-]
+  // menu
+];
