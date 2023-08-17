@@ -7,6 +7,14 @@ app:
 routes:
   - path: '${APP.homepage}'
     context:
+      - name: sayHello
+        value: Hello !!
+      - name: asyncValue
+        resolve:
+          useProvider: basic.http-request
+          args:
+            - /x/y/z
+          lazy: true
       - name: menus
         value:
           - url: '${APP.homepage}'
@@ -16,16 +24,137 @@ routes:
             key: list
             label: List
       - name: active
-        value: <% CTX.menus.find(menu => menu.url === PATH_NAME)?.key %>
-      - name: sayHello
-        value: Hello !!
-      - name: asyncValue
-        resolve:
-          useProvider: basic.http-request
+        value: <% CTX.menus.find((menu) => menu.url === PATH_NAME)?.key %>
+        onChange:
+          action: history.push
           args:
-            - /x/y/z
-          lazy: true
+            - <% CTX.menus.find((menu) => CTX.active === menu.key).url %>
+            - notify: false
     bricks:
+      - brick: sl-menu
+        properties:
+          style:
+            display: flex
+        slots:
+          '':
+            type: bricks
+            bricks:
+              - dataSource: <% CTX.menus %>
+                brick: ':forEach'
+                slots:
+                  '':
+                    type: bricks
+                    bricks:
+                      - brick: sl-menu-item
+                        properties:
+                          value: <% ITEM.key %>
+                          className: '<%= CTX.active === ITEM.key ? ''active'' : '''' %>'
+                          textContent: <% ITEM.label %>
+              - brick: sl-input
+                properties:
+                  size: small
+                  placeholder: Search...
+                  style:
+                    alignSelf: center
+                    marginLeft: 2em
+        events:
+          sl-select:
+            action: context.replace
+            args:
+              - active
+              - <% EVENT.detail.item.value %>
+      - dataSource: <%= CTX.active === 'home' %>
+        brick: ':if'
+        slots:
+          '':
+            type: bricks
+            bricks:
+              - brick: sl-card
+                properties:
+                  className: card-header
+                slots:
+                  header:
+                    type: bricks
+                    bricks:
+                      - brick: div
+                        properties: {}
+                        slots:
+                          '':
+                            type: bricks
+                            bricks:
+                              - brick: span
+                                properties:
+                                  textContent: <% FN.sayHello() %>
+                              - brick: sl-icon-button
+                                properties:
+                                  name: gear
+                                  label: Settings
+                  '':
+                    type: bricks
+                    bricks:
+                      - brick: span
+                        properties:
+                          textContent: >-
+                            This card has a header. You can put all sorts of
+                            things in it!
+                  footer:
+                    type: bricks
+                    bricks:
+                      - brick: sl-button
+                        properties:
+                          textContent: Go to list
+                        events:
+                          click:
+                            action: context.replace
+                            args:
+                              - active
+                              - list
+      - dataSource: <%= CTX.active === 'list' %>
+        brick: ':if'
+        slots:
+          '':
+            type: bricks
+            bricks:
+              - brick: sl-card
+                properties:
+                  className: card-header
+                slots:
+                  header:
+                    type: bricks
+                    bricks:
+                      - brick: div
+                        properties: {}
+                        slots:
+                          '':
+                            type: bricks
+                            bricks:
+                              - brick: span
+                                properties:
+                                  textContent: This is a list
+                              - brick: sl-icon-button
+                                properties:
+                                  name: gear
+                                  label: Settings
+                  '':
+                    type: bricks
+                    bricks:
+                      - brick: span
+                        properties:
+                          textContent: >-
+                            This card has a header. You can put all sorts of
+                            things in it!
+                  footer:
+                    type: bricks
+                    bricks:
+                      - brick: sl-button
+                        properties:
+                          textContent: Back to home
+                        events:
+                          click:
+                            action: context.replace
+                            args:
+                              - active
+                              - home
       - brick: style
         properties:
           textContent: |
@@ -49,147 +178,6 @@ routes:
               color: var(--antd-btn-link-color);
               box-shadow: inset 0 -2px 0 0 var(--antd-btn-link-color);
             }
-      - brick: sl-menu
-        properties:
-          style:
-            display: flex
-        slots:
-          '':
-            type: bricks
-            bricks:
-              - dataSource: <% CTX.menus %>
-                brick: ':forEach'
-                slots:
-                  '':
-                    type: bricks
-                    bricks:
-                      - brick: sl-menu-item
-                        properties:
-                          value: <% ITEM.key %>
-                          className: '<%= CTX.active === ITEM.key ? ''active'' : '''' %>'
-                          textContent: <% ITEM.label %>
-        events:
-          sl-select:
-            - action: history.push
-              args:
-                - >-
-                  <% CTX.menus.find((menu) => EVENT.detail.item.value ===
-                  menu.key)
-                                  .url %>
-                - notify: false
-            - action: context.replace
-              args:
-                - active
-                - <% EVENT.detail.item.value %>
-      - dataSource: <%= CTX.active %>
-        brick: ':switch'
-        slots:
-          home:
-            type: bricks
-            bricks:
-              - brick: div
-                properties: {}
-                slots:
-                  '':
-                    type: bricks
-                    bricks:
-                      - brick: sl-card
-                        properties:
-                          className: card-header
-                        slots:
-                          header:
-                            type: bricks
-                            bricks:
-                              - brick: div
-                                properties: {}
-                                slots:
-                                  '':
-                                    type: bricks
-                                    bricks:
-                                      - brick: span
-                                        properties:
-                                          textContent: <% FN.sayHello() %>
-                                      - brick: sl-icon-button
-                                        properties:
-                                          name: gear
-                                          label: Settings
-                          '':
-                            type: bricks
-                            bricks:
-                              - brick: span
-                                properties:
-                                  textContent: >-
-                                    This card has a header. You can put all
-                                    sorts of things in it!
-                          footer:
-                            type: bricks
-                            bricks:
-                              - brick: sl-button
-                                properties:
-                                  textContent: Go to list
-                                events:
-                                  click:
-                                    - action: history.push
-                                      args:
-                                        - '<% `${APP.homepage}/list` %>'
-                                        - notify: false
-                                    - action: context.replace
-                                      args:
-                                        - active
-                                        - list
-          list:
-            type: bricks
-            bricks:
-              - brick: div
-                properties: {}
-                slots:
-                  '':
-                    type: bricks
-                    bricks:
-                      - brick: sl-card
-                        properties:
-                          className: card-header
-                        slots:
-                          header:
-                            type: bricks
-                            bricks:
-                              - brick: div
-                                properties: {}
-                                slots:
-                                  '':
-                                    type: bricks
-                                    bricks:
-                                      - brick: span
-                                        properties:
-                                          textContent: This is a list
-                                      - brick: sl-icon-button
-                                        properties:
-                                          name: gear
-                                          label: Settings
-                          '':
-                            type: bricks
-                            bricks:
-                              - brick: span
-                                properties:
-                                  textContent: >-
-                                    This card has a header. You can put all
-                                    sorts of things in it!
-                          footer:
-                            type: bricks
-                            bricks:
-                              - brick: sl-button
-                                properties:
-                                  textContent: Back to home
-                                events:
-                                  click:
-                                    - action: history.push
-                                      args:
-                                        - '<% `${APP.homepage}` %>'
-                                        - notify: false
-                                    - action: context.replace
-                                      args:
-                                        - active
-                                        - home
 meta:
   customTemplates: []
   functions:
