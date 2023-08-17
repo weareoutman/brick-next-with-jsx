@@ -1,0 +1,4 @@
+sl-menu-item.active::part(label) {
+  color: var(--antd-btn-link-color);
+  box-shadow: inset 0 -2px 0 0 var(--antd-btn-link-color);
+}

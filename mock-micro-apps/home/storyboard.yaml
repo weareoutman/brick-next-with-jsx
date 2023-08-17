@@ -1,0 +1,10 @@
+app:
+  id: home
+  homepage: /
+  name: Home
+  noAuthGuard: true
+  standaloneMode: true
+routes:
+  - path: /
+    type: redirect
+    redirect: /brick-next-with-jsx

@@ -1,0 +1,206 @@
+app:
+  id: brick-next-with-jsx
+  homepage: /brick-next-with-jsx
+  name: Brick Next with JSX
+  noAuthGuard: true
+  standaloneMode: true
+routes:
+  - path: '${APP.homepage}'
+    exact: true
+    context:
+      - name: sayHello
+        value: Hello !!
+      - name: asyncValue
+        resolve:
+          useProvider: basic.http-request
+          args:
+            - /x/y/z
+          lazy: true
+    bricks:
+      - brick: tpl-menu
+        properties: {}
+      - brick: sl-card
+        properties:
+          className: card-header
+        slots:
+          header:
+            type: bricks
+            bricks:
+              - brick: div
+                properties: {}
+                slots:
+                  '':
+                    type: bricks
+                    bricks:
+                      - brick: span
+                        properties:
+                          textContent: <% FN.sayHello() %>
+                      - brick: sl-icon-button
+                        properties:
+                          name: gear
+                          label: Settings
+          '':
+            type: bricks
+            bricks:
+              - brick: span
+                properties:
+                  textContent: >-
+                    This card has a header. You can put all sorts of things in
+                    it!
+          footer:
+            type: bricks
+            bricks:
+              - brick: sl-button
+                properties:
+                  textContent: Go to list
+                events:
+                  click:
+                    action: history.push
+                    args:
+                      - '${APP.homepage}/list'
+      - brick: style
+        properties:
+          textContent: |
+            .card-header {
+              max-width: 300px;
+              margin: 2em auto;
+              display: block;
+            }
+
+            .card-header [slot='header'] {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            }
+
+            .card-header sl-icon-button {
+              font-size: var(--sl-font-size-medium);
+            }
+  - path: '${APP.homepage}/list'
+    exact: true
+    bricks:
+      - brick: tpl-menu
+        properties:
+          active: list
+      - brick: sl-card
+        properties:
+          className: card-header
+        slots:
+          header:
+            type: bricks
+            bricks:
+              - brick: div
+                properties: {}
+                slots:
+                  '':
+                    type: bricks
+                    bricks:
+                      - brick: span
+                        properties:
+                          textContent: This is a list
+                      - brick: sl-icon-button
+                        properties:
+                          name: gear
+                          label: Settings
+          '':
+            type: bricks
+            bricks:
+              - brick: span
+                properties:
+                  textContent: >-
+                    This card has a header. You can put all sorts of things in
+                    it!
+          footer:
+            type: bricks
+            bricks:
+              - brick: sl-button
+                properties:
+                  textContent: Back to home
+                events:
+                  click:
+                    action: history.push
+                    args:
+                      - '<% `${APP.homepage}` %>'
+      - brick: style
+        properties:
+          textContent: |
+            .card-header {
+              max-width: 300px;
+              margin: 2em auto;
+              display: block;
+            }
+
+            .card-header [slot='header'] {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            }
+
+            .card-header sl-icon-button {
+              font-size: var(--sl-font-size-medium);
+            }
+meta:
+  customTemplates:
+    - name: tpl-menu
+      state:
+        - name: menus
+          value:
+            - url: '${APP.homepage}'
+              key: home
+              label: Home
+            - url: '${APP.homepage}/list'
+              key: list
+              label: List
+        - name: active
+          value: home
+          expose: true
+      bricks:
+        - brick: sl-menu
+          properties:
+            style:
+              display: flex
+          slots:
+            '':
+              type: bricks
+              bricks:
+                - dataSource: <% STATE.menus %>
+                  brick: ':forEach'
+                  children:
+                    - brick: sl-menu-item
+                      properties:
+                        value: <% ITEM.url %>
+                        className: '<% STATE.active === ITEM.key ? ''active'' : '''' %>'
+                        textContent: <% ITEM.label %>
+          events:
+            sl-select:
+              action: history.push
+              args:
+                - <% EVENT.detail.item.value %>
+        - brick: style
+          properties:
+            textContent: |
+              sl-menu-item.active::part(label) {
+                color: var(--antd-btn-link-color);
+                box-shadow: inset 0 -2px 0 0 var(--antd-btn-link-color);
+              }
+  functions:
+    - name: sayHello
+      typescript: true
+      source: |-
+        /**
+         * Say hello to everyone!
+         */
+        function sayHello(): string {
+          return "Hello!";
+        }
+    - name: sayGoodbye
+      source: |-
+        /**
+         * It's hard to say goodbye
+         */
+        function sayGoodbye() {
+          return "Goodbye :(";
+        }
+  menus:
+    - menuId: menu-brick-next-with-jsx
+      title: Brick Next with JSX
