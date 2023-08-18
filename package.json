@@ -17,7 +17,7 @@
     "@next-bricks/icons": "^0.4.1",
     "@next-bricks/illustrations": "^0.1.20",
     "@next-bricks/shoelace": "^0.4.10",
-    "@next-core/brick-container": "^3.5.16",
+    "@next-core/brick-container": "^3.5.18",
     "@next-core/types": "^1.6.0",
     "csstype": "^3.1.2",
     "next-jsx": "^0.1.4",
